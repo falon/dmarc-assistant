@@ -3,17 +3,17 @@
 This is a tool written in PHP to manage SPF, DKIM and DMARC setup in multidomain environment.
 
 ## Abstract
-DMARC Assistant offers a setup manager for SPF, DKIM and DMARC record using predefined templates. It add the records to your nameservers.
+DMARC Assistant offers a setup manager for SPF, DKIM and DMARC record using predefined templates. It adds the records to your nameservers.
 
-It also maintains the DKIM keys (SigningTable and KeyTable, **OpenDKIM required**), and it periodically renew them, keeping old ones for a while.
+It also maintains the DKIM keys (SigningTable and KeyTable, **OpenDKIM required**), and it periodically renews them, keeping old ones for a while.
 
-DMARC Assistant try to govern your setup and warn about anomalies.
+DMARC Assistant tries to govern your setup and it warns about anomalies.
 Every activity is tracked via syslog.
 
 ## DKIM model
 You can have different SMTP servers, each signing with different selectors and keys.
 
-DMARC Assistant create selector and keys for you, and write the DNS record on your nameservers. 
+DMARC Assistant creates selector and keys for you, and it writes the DNS record on your nameservers. 
 
 We define multiple **Selector Class**, which are a prefix for each selector associated to particular servers set.
 Then we build selector as `<selector class>-<hash>`
