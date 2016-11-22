@@ -1,0 +1,34 @@
+[selector]
+class[]=msa-bulk
+class[]=msa-mua
+; separator MUST NOT contain '.' or '_'
+separator = -
+; hash FALSE means we append dom without periods after <tag>.
+; Otherwise an hash of <tag><dom> is added after separator.
+hash = crc32
+;hash = FALSE
+
+[scheme]
+; 'Y' = yearly
+; 'M' = monthly
+; 'W' = weekly
+; Set accordingly the crontab or systemd timer every time you change this value.
+period = W
+
+[genkey]
+; Options passed to opendkim-genkey. Suggested options are
+;	2048 bit key
+;	restrict DKIM record to email use only
+;	allow subdomain signing
+; see at "man opendkim-genkey" 
+opt = '--bits=2048 --restrict --subdomains'
+
+[delay driver]
+ldap = 	TRUE
+mysql = FALSE
+
+[delay time]
+; How long to hold old public key?
+; Syntax: a valid relative datetime format
+; see at http://php.net/manual/en/datetime.formats.relative.php
+interval = 1 week ago

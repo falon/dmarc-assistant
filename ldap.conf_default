@@ -1,0 +1,11 @@
+[server]
+host = localhost
+port = 389
+user = 'uid=dkimadmin,o=dkim'	; see at dkim_initialize.ldif
+pwd  = dkimadmin		; see at dkim_initialize.ldif
+baseDN = 'o=dkim'		; see at dkim_initialize.ldif
+
+[delaydel]
+; Optional configs for delayed expired records follow:
+delayDN = 'o=oldRecord,o=dkim'	; see at dkim_initialize.ldif
+delayATTR = mdrecord		; see at dkim_initialize.ldif

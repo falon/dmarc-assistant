@@ -1,0 +1,38 @@
+<?php
+
+
+	/* template */
+        $qualifiers = array(
+                0 =>    array(  'value'		=> '+',
+                                'desc'		=> 'PASS',
+                                'selected'	=> FALSE
+                        ),
+                1 =>    array(  'value'		=> '-',
+                                'desc'		=> 'FAIL',
+                                'selected'	=> FALSE
+                        ),
+                2 =>    array(  'value'		=> '~',
+                                'desc'		=> 'SOFTFAIL',
+                                'selected'	=> FALSE
+                        ),
+                3 =>    array(  'value'		=> '?',
+                                'desc'		=> 'NEUTRAL',
+                                'selected'	=> FALSE
+                        )
+        );
+
+        $modifiers = array(
+		0 =>	array(	'value'		=> 'include:_spfbulk.example.com',
+				'desc'		=> 'BulkEmails',
+				'selected'	=> FALSE
+			),
+		1 =>	array(	'value'		=> 'include:_spfmua.example.com',
+                                'desc'          => 'MUAEmails',
+                                'selected'      => FALSE
+                        ),
+                2 =>    array(  'value'         => 'all',
+                                'desc'          => 'ALL',
+                                'selected'      => FALSE
+                        )
+	);
+?>

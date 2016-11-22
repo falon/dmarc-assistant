@@ -1,0 +1,9 @@
+; Own name servers
+ns[] = dns1.example.com
+ns[] = dns2.example.com
+ns[] = dns3.example.com
+
+[nsupdate]
+name[internal] = dnsinternal.example.com
+name[external] = dns1.example.com
+TTL = 86400

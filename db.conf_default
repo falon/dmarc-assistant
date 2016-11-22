@@ -1,0 +1,6 @@
+; Optional MySQL DB for delayed expired DKIM pubkey records.
+host = localhost
+user = dkimmer
+pass = password
+name = DKIMExpireRecord
+table = record

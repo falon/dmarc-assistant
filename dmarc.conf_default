@@ -1,0 +1,8 @@
+;default RFC7489 values
+; these fields are not written to record if their values matches with corresponding default
+adkim = r
+aspf = r
+rf = afrf
+fo = 0
+pct = 100
+ri = 86400
