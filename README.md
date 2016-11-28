@@ -224,6 +224,8 @@ You can:
 	3. manage AUIDs associated to a single email addresses.
 	4. check the state of keys in current time slot.
 	5. check setup anomalies
+	
+![screenshot](doc/screenshot.jpg)
 
 ----------
 #### Disclaimer ####
