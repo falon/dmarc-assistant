@@ -32,6 +32,8 @@ You can also set an AUID for a single email address.
 
 Of course, to be DMARC friendly, every domain must have at least a dedicated pair of key. Subdomains could use the parent domain keys in relaxed DMARC fashion.
 
+![DKIM model](doc/DMARCAssistant.gif)
+
 ## Prerequisites:
 1. You are a domain DNS manager and a mail provider for one or multiple domains.
 2. Sign your mails with **OpenDKIM** with *SigningTable* and *KeyTable* over LDAP
