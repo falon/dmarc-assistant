@@ -7,8 +7,8 @@ fac = LOG_MAIL
 
 [SPF]
 template = TRUE
-def_record = 'v=spf1 include:_spfucnet.csi.it include:_spfmailfarmnet.csi.it ~all'
+def_record = 'v=spf1 include:_spfbulk.example.com include:_spfbulk.example.com ~all'
 
 [DMARC]
 template = TRUE
-def_record = 'v=DMARC1; p=none; pct=100; adkim=r; aspf=r; fo=1; ri=86400; rua=mailto:dmarc+rua@csi.it; ruf=mailto:dmarc@csi.it'
+def_record = 'v=DMARC1; p=none; pct=100; adkim=r; aspf=r; fo=1; ri=86400; rua=mailto:dmarc+rua@example.com; ruf=mailto:dmarc@example.com'
