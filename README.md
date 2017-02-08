@@ -103,12 +103,8 @@ For instance, if you have Apache HTTPD Server:
     			</RequireAny>
     		</Directory>
 		
-6. Using composer in /var/www/html install with this _composer.json_:
-
-		"require": {
-		"php": ">=5.5",
-		"falon/dmarc-setup-assistant"
-		}
+6. Clone, then from the home directory 
+`composer require jeremykendall/php-domain-parser`
 
 7. The root folder has to be owned by the system user running the web server.
 For instance:
