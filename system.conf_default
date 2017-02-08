@@ -7,7 +7,7 @@ fac = LOG_MAIL
 
 [SPF]
 template = TRUE
-def_record = 'v=spf1 include:_spfbulk.example.com include:_spfbulk.example.com ~all'
+def_record = 'v=spf1 include:_spfbulk.example.com include:_spfmua.example.com ~all'
 
 [DMARC]
 template = TRUE
