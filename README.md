@@ -226,6 +226,24 @@ You can:
 ![screenshot](doc/screenshot.jpg)
 
 ----------
+
+### Setup Operation Mode
+
+DMARC Assistant offers two setup mode:
+
+1. Relaxed
+2. Strict
+
+*Relaxed mode* (default) is the easiest way if you have many subdomain and you want to manage them with one DKIM signature, one DMARC record with relaxed DKIM alignment. If you enter a subdomain, the GUI shows the corresponding Organizational domain for DKIM and DMARC and you can't manage subdomains (with the exception of SPF).
+
+*Strict mode* let you to manage DKIM, DMARC and SPF record for each subdomain. This is the more flexible way. It is useful only if:
+
+1. you want different signatures for subdomain of the same Organizational domain.
+2. you choose strict DKIM alignment in DMARC policy.
+3. you want deeply customize DMARC records for each subdomain.
+
+Remember that with Strict setup mode you could suffer to manage your domains. You could fall in a complicated situation!
+
 #### Disclaimer ####
 You find here **only a minimal description**. A more detailed documentation will come... soon...
 
