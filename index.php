@@ -65,7 +65,10 @@ foreach ( $selclass as $sel )
 ?>
 </select>
 </td>
-
+</tr>
+<tr>
+<td>Op mode</td><td><select name="op" onChange="xmlhttpPost('list.php', 'QueryDef', 'List', '<img src=\'/include/pleasewait.gif\'>'); return false;"><option value="False">Relaxed</option><option value="True">Strict</option></select>
+</td>
 </tr>
 </table>
 </form>

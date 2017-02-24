@@ -115,7 +115,7 @@ function getPrivSel ($ds, $basedn, $dom, $selclass, $selAttr, &$err) {
 			
 		
 		
-function ldap_pardom_get_privSel ($ds, $basedn, &$dom, $selclass, $selAttr, &$err) {
+function ldap_pardom_get_privSel ($ds, $basedn, &$dom, $selclass, $selAttr, $strictmode, &$err) {
 /* Find selector on dom or parent dom of at least second level */
 /* Return the selector and the associated domain, or FALSE and tld */
 // $selector = <selclass><sep><hashtag>
@@ -128,7 +128,8 @@ function ldap_pardom_get_privSel ($ds, $basedn, &$dom, $selclass, $selAttr, &$er
 		$err .= $error."\n";
 	if ( $dom == orgDom($dom) ) return FALSE;
 	$dom = substr($occurrence,1);
-	return ldap_pardom_get_privSel ($ds, $basedn, $dom, $selclass, $selAttr, $err);
+	if ($strictmode) return FALSE;
+	return ldap_pardom_get_privSel ($ds, $basedn, $dom, $selclass, $selAttr, $strictmode, $err);
 }
 
 
@@ -662,7 +663,7 @@ function is_own($dom, $nameservers) {
 
 
 
-function dns_pardom_get_record (&$dom,$type) {
+function dns_pardom_get_record (&$dom,$type,$strictmode) {
 /* Find first record on parent dom of at least second level */
 /* Return the record and the associated subdomain */
 /* Really not used for DKIM... */
@@ -672,9 +673,10 @@ function dns_pardom_get_record (&$dom,$type) {
 		return FALSE;
 
 	switch ( $type ) {
-		case 'DKIM':
+		/* case 'DKIM':
 			$recordname = $selector . "._domainkey.$dom";
 			break;
+		*/
 		case 'DMARC':
 			$recordname = "_dmarc.$dom";
 			break;
@@ -684,10 +686,11 @@ function dns_pardom_get_record (&$dom,$type) {
 	
 	if ( $record = readRecord($recordname, $type) )
 		return $record;
+	if ($strictmode) return FALSE;
 	if ( $dom == orgDom($dom) ) return FALSE;
 	else {
 		$dom = substr($occurrence,1); 
-		return dns_pardom_get_record ( $dom, $type );
+		return dns_pardom_get_record ( $dom, $type, $strictmode );
 	}
 }
 

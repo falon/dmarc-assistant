@@ -2,6 +2,7 @@
 
 require_once('function.php');
 $dom = $_POST['domain'] ?: NULL;
+$str_mode = filter_var($_POST['op'], FILTER_VALIDATE_BOOLEAN);
 $domfound = $dom;
 $dkim = parse_ini_file('dkim.conf', true);
 $selclass = $_POST['selclass'] ?: FALSE;
@@ -30,6 +31,9 @@ if ( is_null($dom) ) exit ('<p><img src="unchecked.gif">Please, insert a valid d
 
 /* DKIM */
 $class = NULL;
+if ($str_mode)
+	print '<p><img src="warning.gif">You choose a strict operation mode. You are allowed to configure DKIM and DMARC for each subdomain and not only for Organizational domain. Please, take care about your setup.</p>';
+	
 print '<h2>DKIM</h2><div id="content">';
 $own = is_own($dom, $conf['ns']);
 $setup_opt = NULL;
@@ -43,7 +47,7 @@ if ( $own ) {
 	}
 
 	/* Search the selector in KeyTable */
-	if ( $sel = ldap_pardom_get_privSel($ldapconn, $ldap['server']['baseDN'], $domfound, $selclass, 'dkimSelector', $err) ) {
+	if ( $sel = ldap_pardom_get_privSel($ldapconn, $ldap['server']['baseDN'], $domfound, $selclass, 'dkimSelector', $str_mode, $err) ) {
 	        if ($domfound != $dom) {
 			/* If I found a record I should be the maintainer, anyway I recheck the ownership */
 			$class = ' class="shadow blink"'; //Formatting
@@ -152,7 +156,7 @@ $domfound = $dom;
 $class = NULL;
 print '<h2>DMARC</h2>';
 print '<div id="content">';
-if ( $dmarc = dns_pardom_get_record($domfound,'DMARC') ) {
+if ( $dmarc = dns_pardom_get_record($domfound,'DMARC',$str_mode) ) {
 	if ($domfound != $dom) 
 		$class = ' class="shadow blink"'; //Formatting
 }
@@ -167,11 +171,13 @@ if ( $dmarc ) {
 	$own = is_own($domfound, $conf['ns']);
 	if ( $own && ( count ($dmarc) > 1 ) ) {
 		delete_record_form($domfound,'DMARC');
-		print '<p><img src="unchecked.gif"> There are too many DMARC record!! What have you done?! Oh damn...</p><div id=\'DMARCresult\'></div>';
+		print '<p><img src="unchecked.gif"> There are too many DMARC records!! What have you done?! Oh damn...</p><div id=\'DMARCresult\'></div>';
 	}
 	else {
 		print '<p><img src="checked.gif">DMARC record exists:</p><blockquote>'.htmlentities($dmarc[0]).'</blockquote>';
 		if ($own) {
+			if ( !$str_mode AND preg_match('/adkim=s;/', $dmarc[0]) )
+                                print '<p><img src="warning.gif"> You choose the setup mode <b>Relaxed</b>, but your DMARC record requires <b>Strict</b> DKIM alignment. You could experience many issue if you don\'t configure a signature for each subdomain. Hint: switch to <b>Relaxed</b> DKIM alignment.</p>';
 			delete_record_form($domfound,'DMARC');
                 	if (!mod_dmarc($domfound, $dmarc[0], $system['DMARC']['template'], $err))
                         	print '<pre><img src="warning.gif"> '. htmlentities($err). '</pre>';
