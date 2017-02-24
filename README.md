@@ -1,4 +1,4 @@
- DMARC Assistant
+# DMARC Assistant
 
 This is a tool written in PHP to manage SPF, DKIM and DMARC setup in multidomain environment.
 
