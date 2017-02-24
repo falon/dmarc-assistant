@@ -242,7 +242,7 @@
 	2. you choose strict DKIM alignment in DMARC policy, so see at above.
 	3. you want deeply customize DMARC records for each subdomain.
 
-	Remember that with Strict setup mode you could suffer to manage your domains. You could fall in a complicated situation!
+	Remember that with Strict setup mode you could suffer managing your domains. You could really complicate your life! You could fall in disgrace, remember this.
 
 	#### Disclaimer ####
 	You find here **only a minimal description**. A more detailed documentation will come... soon...
