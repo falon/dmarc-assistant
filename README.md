@@ -79,7 +79,7 @@ Enter this file and change any password, password policy references and selector
 For instance, if you have Apache HTTPD Server:
 	- __yum install httpd mod_ssl__
 	- vi _/etc/httpd/conf.d/90access.conf_:
-
+	```	
 		    <AuthnProviderAlias ldap authservice>
 		   AuthLDAPBindDN uid=proxy,c=en
 		   AuthLDAPBindPassword ******
@@ -102,7 +102,7 @@ For instance, if you have Apache HTTPD Server:
 				Require serviceUsers
 			</RequireAny>
 		</Directory>
-		
+	```	
 6. Clone, then from the home directory 
 `composer require jeremykendall/php-domain-parser`
 
