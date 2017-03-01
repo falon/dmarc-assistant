@@ -80,7 +80,7 @@ For instance, if you have Apache HTTPD Server:
 	- __yum install httpd mod_ssl__
 	- vi _/etc/httpd/conf.d/90access.conf_:
 	```	
-		    <AuthnProviderAlias ldap authservice>
+		<AuthnProviderAlias ldap authservice>
 		   AuthLDAPBindDN uid=proxy,c=en
 		   AuthLDAPBindPassword ******
 		   AuthLDAPURL ldap://localhost:389/c=en?uid
