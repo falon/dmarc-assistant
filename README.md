@@ -115,12 +115,12 @@ chown apache dmarc-setup-assistant
 	- The [delaydel] section is meaningful only if you set `ldap =  TRUE` in `[delay driver]` of *dkim.conf*.
 9. `cp -p dkim.conf_default dkim.conf` and configure it as expected in _dkim\_initialize.ldif_. In particular, you may want to change the Selector Classes and time slot.
 	- pay attention. If you change a Selector class, you must manually update the LDIF file _dkim\_initialize.ldif_ accordingly. For instance, if you add the Selector Class "alice", the you must add on the LDAP server:
-	
+```
 		dn: ou=alice,o=dkim
 		ou: alice
 		objectClass: top
 		objectClass: organizationalunit
-
+```
 10. `cp -p db.conf_default db.conf` only if you want delay driver over mysql. Set credential, table and field names.
 11. `cp -p dmarc.conf_default dmarc.conf`. This file comes with default RFC7489 values which are not written to the DMARC record. Usually, there are no reasons to modify this file.
 12. `cp -p ns.conf_default ns.conf`.
