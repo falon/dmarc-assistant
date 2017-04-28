@@ -116,7 +116,7 @@ chown apache dmarc-setup-assistant
 9. `cp -p dkim.conf_default dkim.conf` and configure it as expected in _dkim\_initialize.ldif_. In particular, you may want to change the Selector Classes and time slot.
 	- pay attention. If you change a Selector class, you must manually update the LDIF file _dkim\_initialize.ldif_ accordingly. For instance, if you add the Selector Class "alice", the you must add on the LDAP server:
 	
-		    dn: ou=alice,o=dkim
+		dn: ou=alice,o=dkim
 		ou: alice
 		objectClass: top
 		objectClass: organizationalunit
