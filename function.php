@@ -324,6 +324,7 @@ function ldap_deleteOldRecord($ldapconf, $nsupdateconf, $createTimestamp) {
 
 	/* Real delete */
 	$ret = TRUE;
+	$retL = FALSE;
 	for ($i=0; $i<$nr; $i++) {
 		if ( $retD = updatezone($nsupdateconf['name'], 'delete',
                 array('dom' => $records['values'][$i], 'prereq' => "yxdomain {$records['values'][$i]}", 'type' => 'TXT'), '', $err) )
@@ -716,6 +717,7 @@ function dns_getMX ($dom, &$err) {
 
 function remove_dkim_dns($drv_del,$ds,$delay_dn,$dom,$sel,&$err) {
 /* Unlucky function title. Really is a *Delay delete* for the selector */
+	$username=username();
         switch ( $drv_del ) {
                 case 'mysql':
                         $db = parse_ini_file('db.conf', true);
@@ -759,7 +761,7 @@ function nsupdate($data, &$err) {
 		return FALSE;
 	}
 	exec("/usr/bin/nsupdate $tmpfile 2>&1", $ret, $status);
-	if ($status != 0)  {
+	if ($status !== 0)  {
 		$err = "DNS: Update failed with code <$status>. File <$tmpfile> preserved for evidences.";
 		if (! empty($ret) )
 			$err .= ' Reason: <'.implode(' - ',$ret).'>.';
@@ -960,6 +962,7 @@ function mysql_deleteOldRecord($db, $nsupdateconf, $mydate) {
 
         /* Real delete */
 	$ret = TRUE;
+	$retM= FALSE;
         for ($i=0; $i<$nr; $i++) {
                 if ( $retD = updatezone($nsupdateconf['name'], 'delete',
 		array('dom' => $records[$i], 'prereq' => "yxdomain {$records[$i]}", 'type' => 'TXT'), '', $err) )
@@ -1105,8 +1108,6 @@ FORMEND;
         /* Add Web Form for DKIM Keys and Signing Path; return TRUE if setup is complete. */
 
 	$ldapconf = $ldap['server'];
-	$selval = $dkim['scheme']['period'];
-	$sep = $dkim['selector']['separator'];
 
 	$add_key = <<<END
         <tr>
@@ -1199,7 +1200,7 @@ function create_dkim_keys($domain,$selector, $pathOpenDKIM, $opt_str) {
 	$gencommand = $pathOpenDKIM.' --directory='.__DIR__." $opt_str --append-domain --domain=$domain --selector=$selector";
 	if (system($gencommand,$status) !== FALSE) syslog(LOG_INFO, $username.": Info: system call for $pathOpenDKIM succeeds");
 	else syslog(LOG_ERR, $username.": Error: unable to execute system call for opendkim-genkey");
-	if ( $status == 0 ) syslog(LOG_INFO, $username.": Info: opendkim-genkey terminated with success state for <$domain> and selector <$selector>.");
+	if ( $status === 0 ) syslog(LOG_INFO, $username.": Info: opendkim-genkey terminated with success state for <$domain> and selector <$selector>.");
 	else syslog(LOG_ALERT, $username.": Error: opendkim-genkey can't generate the keys for <$domain> and selector <$selector>. Check options and syntax in [genkey] section of file dkim.conf.");
 	
 	if ( file_exists(__DIR__.'/'.$selector.'.private') AND file_exists(__DIR__.'/'.$selector.'.txt') )
@@ -1238,6 +1239,7 @@ function renewkeys($ds,$dn,$delaydn,$dom,$sel,$selclass,$keyopt,$nsupdateconf,$d
 
 	$username = username();
 	$errors = NULL;
+	$curSel = NULL;
 	if (! dns_getMX ($dom, $errors)) return -5;
 
 	if ( $drv_del != 'add' ) {
@@ -1414,6 +1416,8 @@ FORM;
 		printTableHeader('',array('Qualifier','Modifier'),TRUE,'<input type="submit" class="btn" width="100%" value="Engage">');
 	        print '<tbody>';
 		$nmech = count($mech);
+		$modifier = NULL;
+		$qualifier = NULL;
 		for ($i = 1; $i < $nmech; $i++) {
 			require('spf_config.php');
 			/* See at http://tools.ietf.org/html/rfc7208#section-4.6.2 */
@@ -1585,7 +1589,7 @@ function setURIzone($ns,$dom,$tag,$uri,&$warning,&$error) {
 		syslog(LOG_ERR,$username.": $err");
 	}
 
-	list($local,$edom) = explode('@',$email);
+	list(,$edom) = explode('@',$email);
 	if (! dns_getMX ($edom, $err))
 		$error[] = $err;
 	if ( orgDom($edom) != orgDom($dom) ) {
@@ -1659,6 +1663,7 @@ FORM;
 		$thistags = recordToArray($record);
 		if ( $thistags === FALSE ) $err .= 'Error in DMARC record syntax';
 		$thistagnames = array_keys($thistags);
+		$tags = array();
 		require_once('dmarc_config.php');
 		$tagnames = array_keys($tags);
 		foreach ( $tagnames as $tag ) {
@@ -1721,6 +1726,7 @@ function updateRecord ( $dom, &$prev, $new, $type, $ns, &$err, $web = TRUE ) {
 	}
 
 	$username = username();
+	$dnsR = array();
 
 	/* Consistency checks... */
 	$err = NULL;

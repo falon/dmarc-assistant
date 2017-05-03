@@ -112,14 +112,16 @@ if (! is_null($ssl_comment) )
 <p><?php echo $phpVer_comment ?></p>
 <p><?php echo $timeZone ?></p>
 <p><?php echo $dpstatus; ?></p>
-<pre><?php foreach ( $domainparser as $row ) print $row."\r\n"; ?></pre>
+<pre><?php if ( is_array($domainparser) )
+		foreach ( $domainparser as $row ) print $row."\r\n"; ?></pre>
 <p><b><?php echo $user ?></b></p>
 </div>
 
 <h2>DKIM</h2>
 <div id="content">
 <p><?php echo $odstatus; ?></p>
-<pre><?php foreach ( $od as $row ) print $row."\r\n"; ?></pre>
+<pre><?php if ( is_array($od) )
+		foreach ( $od as $row ) print $row."\r\n"; ?></pre>
 <p><?php echo $gk ?></p>
 <p><?php echo $ldapstatus; ?></p>
 <?php if ( isset($ldap_comment) ) echo "<p>$ldap_comment</p>"; ?>
