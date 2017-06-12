@@ -48,7 +48,7 @@ else {
 foreach ($dkim['selector']['class'] as $selclass) {
 	if ( is_tree ($ldapconn, "ou=$selclass".','.$ldap['server']['baseDN'], 'ou', $selclass) ) {
 		$dkim["$selclass"]['status'] = sprintf('<img src="checked.gif"> The LDAP tree for %s is present in your LDAP server',$selclass);
-		$dkim["$selclass"]['conf'] = sprintf('SigningTable ldap://%s:%d/ou=%s,%s?DKIMSelector,DKIMIdentity?sub?(&(|(mail=$d)(mailAlternateAddress=$d))(objectclass=dkimMailRecipient)(DKIMSelector=*))',$ldap['server']['host'],$ldap['server']['port'],$selclass,$ldap['server']['baseDN']);
+		$dkim["$selclass"]['conf'] = sprintf('SigningTable ldap://%s:%d/ou=%s,%s?DKIMSelector,DKIMIdentity?sub?(&(|(mail=$d)(mailAlternateAddress=$d))(objectclass=dkimmailrecipient)(DKIMSelector=*))',$ldap['server']['host'],$ldap['server']['port'],$selclass,$ldap['server']['baseDN']);
 		$dkim["$selclass"]['conf'] .= "\r\n".sprintf('KeyTable ldap://%s:%d/ou=%s,%s?DKIMDomain,DKIMSelector,DKIMKey?sub?(&(DKIMSelector=$d)(DKIMDomain=*)(DKIMKey=*))',$ldap['server']['host'],$ldap['server']['port'],$selclass,$ldap['server']['baseDN']);
 	}
 	else	{
