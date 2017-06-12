@@ -395,7 +395,7 @@ function add_dkim_ldap($ds, $base, $dom, $sel, $selclass, $key, &$err) {
         $info['objectClass'][0] = 'top';
         $info['objectClass'][1] = 'organizationalunit';
         $info['objectClass'][2] = 'dkim';
-        $info['objectClass'][3] = 'inetlocalmailrecipient';
+        $info['objectClass'][3] = 'dkimMailRecipient';
         $info['ou'] = 'SigningTable';
         if (! add_ldap ($ds, $dn, $info, $err) ) return FALSE;
 
@@ -460,7 +460,7 @@ function add_dkim_subdom_ldap($ds, $base, $dom, $subdom, $sel, $selclass, &$err)
         $info['objectClass'][0] = 'top';
         $info['objectClass'][1] = 'organizationalunit';
         $info['objectClass'][2] = 'dkim';
-        $info['objectClass'][3] = 'inetlocalmailrecipient';
+        $info['objectClass'][3] = 'dkimMailRecipient';
         $info['DKIMSelector'] = $sel;
 
         syslog (LOG_INFO,  $username.' Info: LDAP: adding DKIM Identity for '.$subdom);
@@ -509,7 +509,7 @@ function add_dkim_email_ldap($ds, $base, $dom, $email, $alias, $gn, $sn, $sel, $
         $info['objectClass'][2] = 'organizationalPerson';
         $info['objectClass'][3] = 'inetorgperson';
         $info['objectClass'][4] = 'dkim';
-        $info['objectClass'][5] = 'inetlocalmailrecipient';
+        $info['objectClass'][5] = 'dkimMailRecipient';
         $info['DKIMSelector'] = $sel;
         $info['givenName'] = $gn;
         $info['sn'] = $sn;
