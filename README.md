@@ -71,7 +71,7 @@ Enter this file and change any password, password policy references and selector
 	- dkimKey: presence
 	- mail: equality, presence
 	- mailAlternateAddress: equality
-	- mdRecord: presence
+	- dkimRecord: presence
 	- ou: presence
 	- uid: presence
 

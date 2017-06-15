@@ -8,4 +8,4 @@ baseDN = 'o=dkim'		; see at dkim_initialize.ldif
 [delaydel]
 ; Optional configs for delayed expired records follow:
 delayDN = 'o=oldRecord,o=dkim'	; see at dkim_initialize.ldif
-delayATTR = mdrecord		; see at dkim_initialize.ldif
+delayATTR = dkimrecord		; see at dkim_initialize.ldif

@@ -24,6 +24,12 @@ AttributeTypes: ( 1.3.6.1.4.1.29426.2.2.1.4
   EQUALITY caseExactIA5Match
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.26
   SINGLE-VALUE )
+AttributeTypes: ( 1.3.6.1.4.1.29426.2.2.1.5
+  NAME 'DKIMRecord'
+  DESC 'DKIM Pubkey Record'
+  EQUALITY caseExactIA5Match
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26
+  SINGLE-VALUE )
 ObjectClasses: ( 1.3.6.1.4.1.29426.2.2.2.1
   NAME 'DKIM'
   DESC 'DKIM Selector and Key container'
@@ -38,3 +44,11 @@ ObjectClasses: ( dkimMailRecipient-oid
   AUXILIARY
   MUST ( )
   MAY ( mail $ mailAlternateAddress ) )
+ObjectClasses: ( dkimDelete-oid
+  NAME 'dkimDelete'
+  DESC 'DKIM attributes for expired selectors'
+  SUP top
+  AUXILIARY
+  MUST ( DKIMRecord )
+  MAY ( ) )
+

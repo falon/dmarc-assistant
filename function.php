@@ -230,11 +230,11 @@ function ldap_delayed_delete($ds,$base,$sel,$dom,&$err) {
 	$dn = "dc=$sel-$dom,$base";
 	$info['objectClass'][0] = 'top';
 	$info['objectClass'][1] = 'domain';
-	$info['objectClass'][2] = 'dnsdomain';
+	$info['objectClass'][2] = 'dkimdelete';
 	$info['objectClass'][3] = 'dkim';
 	$info['dkimdomain'] = $dom;
 	$info['dkimselector'] = $sel;
-	$info['mdrecord'] = $oldDKIMrecord;
+	$info['dkimrecord'] = $oldDKIMrecord;
 	
 	
         if ( add_ldap ($ds, $dn, $info, $err) )
