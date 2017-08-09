@@ -1406,6 +1406,7 @@ function printSelectListSelected ($array,$name) {
 function mod_spf($dom, $record, $use_tmpl, &$err) {
 
 	$err = NULL;
+	$tmplout= '';
         print <<<FORM
         <form method="POST" name="SPF" action="SPFset.php" onSubmit="xmlhttpPost('SPFset.php', 'SPF', 'SPFresult', '<img src=\'/include/pleasewait.gif\'>'); return false;">
 FORM;
@@ -1416,7 +1417,6 @@ FORM;
 		$nmech = count($mech);
 		$modifier = NULL;
 		$qualifier = NULL;
-		$tmplout= '';
 		for ($i = 1; $i < $nmech; $i++) {
 			require('spf_config.php');
 			/* See at http://tools.ietf.org/html/rfc7208#section-4.6.2 */
