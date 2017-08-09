@@ -129,7 +129,7 @@ chown apache dmarc-setup-assistant
 13. `cp -p system.conf_default system.conf`. Configure some detail about syslog and path of *opendkim-genkey*. Also set the default SPF and DMARC records.
 	1. If `template = FALSE` the GUI provides the ability to directly write the record. This could be dangerous.
 	2. If `template = TRUE` the GUI provides a standard template within you can write the record.
-14. `cp -p spf_config.php_default spf_config.php`. While we don't suggest to modify `$qualifiers` array, you probably must arrange the `$modifiers`. This last one is an array of SPF modifiers which will appear in SPF template. For instance, if you add a modifier like `include:_spfbulk.example.com`, then if your cure to provide a DNS record for that.
+14. `cp -p spf_config.php_default spf_config.php`. While we don't suggest to modify `$qualifiers` array, you probably must arrange the `$modifiers`. This last one is an array of SPF modifiers which will appear in SPF template. For instance, if you add a modifier like `include:_spfbulk.example.com`, then is your cure to provide a DNS record for that.
 15. Enter the web site and click on Info link on the right upper corner. Check at your setup.
 	- For your convenience, you could erase the file setup.php after you checked the info provided. Or you could change the permission to 000 (`chmod 000 setup.php`).
 
