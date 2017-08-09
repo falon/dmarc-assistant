@@ -137,7 +137,7 @@ else if ( $record !== FALSE ) {
         print '<p><img src="checked.gif">SPF record exists:</p><blockquote>'.htmlentities($record[0]).'</blockquote>';
         if ($own) {
 		delete_record_form($dom,'SPF');
-		if (!mod_spf($dom,$record[0],$system['SPF']['template'],$err)) print "<p><img src=\"unchecked.gif\"> $err.</p>";
+		if (!mod_spf($dom,$record[0],$system['SPF']['template'],$err)) printf ("<p><img src=\"unchecked.gif\">%s</p>",htmlspecialchars($err));
 	}
 }
 if ( $record === FALSE ) {
@@ -145,7 +145,7 @@ if ( $record === FALSE ) {
         if ( $own ) {
                 $spf_might = $system['SPF']['def_record'];
                 if (!mod_spf($dom, $spf_might, $system['SPF']['template'], $err))
-			print "<p><img src=\"unchecked.gif\"> $err.</p>";
+			printf ("<p><img src=\"unchecked.gif\">%s</p>",htmlspecialchars($err));
         }
 }
 print '</div>';

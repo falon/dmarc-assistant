@@ -1405,6 +1405,7 @@ function printSelectListSelected ($array,$name) {
 
 function mod_spf($dom, $record, $use_tmpl, &$err) {
 
+	$err = NULL;
         print <<<FORM
         <form method="POST" name="SPF" action="SPFset.php" onSubmit="xmlhttpPost('SPFset.php', 'SPF', 'SPFresult', '<img src=\'/include/pleasewait.gif\'>'); return false;">
 FORM;
@@ -1412,12 +1413,10 @@ FORM;
         if ($mech[0] != 'v=spf1') return FALSE;
 
 	if ($use_tmpl) {
-		print '<table>';
-		printTableHeader('',array('Qualifier','Modifier'),TRUE,'<input type="submit" class="btn" width="100%" value="Engage">');
-	        print '<tbody>';
 		$nmech = count($mech);
 		$modifier = NULL;
 		$qualifier = NULL;
+		$tmplout= '';
 		for ($i = 1; $i < $nmech; $i++) {
 			require('spf_config.php');
 			/* See at http://tools.ietf.org/html/rfc7208#section-4.6.2 */
@@ -1437,23 +1436,33 @@ FORM;
         	        if ( ($key= array_search( $modifier, array_column($modifiers, 'value'))) !== FALSE )
                		 	$modifiers[$key]['selected'] = TRUE;
 			else {
-	                	$err = 'SPF: not expected modifier found '.$modifier;
+	                	$err = 'SPF: not expected modifier found: <' . $modifier . '>';
 	        	        syslog(LOG_ERR, username().": Error: $err.");
-	                	return FALSE;
+				$err .= '. You can go on typing your record directly, at your own risk.';
+	                	$use_tmpl = FALSE;
+				break;
 			}
 
 	                if ( ($key= array_search( $qualifier, array_column($qualifiers, 'value'))) !== FALSE )
 	                	$qualifiers[$key]['selected'] = TRUE;
 
-			print '<tr><td>'.printSelectListSelected ($qualifiers,'qualifiers[]').'</td>';
-			print '<td>'.printSelectListSelected ($modifiers,'modifiers[]').'</td></tr>';
+			$tmplout .=	'<tr><td>'.printSelectListSelected ($qualifiers,'qualifiers[]').'</td>'.
+					'<td>'.printSelectListSelected ($modifiers,'modifiers[]').'</td></tr>'."\n";
 		}
+	}
+	if ($use_tmpl) {
+                print '<table>';
+                printTableHeader('',array('Qualifier','Modifier'),TRUE,'<input type="submit" class="btn" width="100%" value="Engage">');
+                print '<tbody>';
+		print $tmplout;
 	}
 	else 	/* Let specify entire record */
 		printEditRecord('SPF',$record);
 
 	print '</tbody></table><input type="hidden" name="dom" value="'.$dom.'"></form><div id=\'SPFresult\'></div>';
-	return TRUE;
+	if ( empty($err) )
+		return TRUE;
+	return FALSE;
 }
 
 
