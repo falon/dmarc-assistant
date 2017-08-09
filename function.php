@@ -1344,7 +1344,7 @@ function printEditRecord ($type, $record) {
                 print <<<RECORD
                 <tbody>
                 <tr><td colspan="2">Change at your own risk the record typing it directly:</td></tr>
-                <tr><td>$type</td><td><input type="text" name="record" size="140" value="$record"></td></tr>
+                <tr><td>$type</td><td><input type="text" name="record" size="95" value="$record"></td></tr>
 RECORD;
 }
 
