@@ -1,4 +1,5 @@
 *.conf
 vendor
 spf_config.php
+_config.yml
 doc/dkim_initialize_csi.ldif
