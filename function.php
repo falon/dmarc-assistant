@@ -1534,10 +1534,10 @@ function printDMARCinput($tag, $name) {
 
 function makeDMARCrecord($part, $def, &$err=NULL) {
 	/* rebuild record from its parts */
-	function unsetIfset (&$this,$def,$thistag) {
-		if ( isset($this["$thistag"]) AND isset($def["$thistag"]) )
-			if ( $this["$thistag"] == $def["$thistag"] )
-				unset( $this["$thistag"] );
+	function unsetIfset (&$thisv,$def,$thistag) {
+		if ( isset($thisv["$thistag"]) AND isset($def["$thistag"]) )
+			if ( $thisv["$thistag"] == $def["$thistag"] )
+				unset( $thisv["$thistag"] );
 	}
 	
 	/* Normalize parts */
