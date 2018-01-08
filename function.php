@@ -1344,7 +1344,7 @@ function printEditRecord ($type, $record) {
                 print <<<RECORD
                 <tbody>
                 <tr><td colspan="2">Change at your own risk the record typing it directly:</td></tr>
-                <tr><td>$type</td><td><input type="text" name="record" size="95" value="$record"></td></tr>
+                <tr><td>$type</td><td><input type="text"  pattern="[\x00-\x7F]+" name="record" size="95" value="$record" title="Only ASCII chars, please."></td></tr>
 RECORD;
 }
 
@@ -1525,7 +1525,7 @@ function printDMARCinput($tag, $name) {
 		case 'ri':
 			return sprintf('<input type="number" name="%s" value="%d" min="3600" title="%s">',$name,$tag['value'],$tag['desc']);
 		default:
-			return sprintf('<input type="text" name="%s" value="%s" maxlenght="255" size="30" title="%s">',$name,$tag['value'],$tag['desc']);
+			return sprintf('<input type="text" name="%s" value="%s" maxlenght="255" size="30" title="%s" pattern="[\x00-\x7F]+">',$name,$tag['value'],$tag['desc']);
 	}
 }
 
