@@ -1740,6 +1740,11 @@ function updateRecord ( $dom, &$prev, $new, $type, $ns, &$err, $web = TRUE ) {
 	/* Consistency checks... */
 	$err = NULL;
 	$prev= NULL;
+	if ( (preg_match ( '/^[\x00-\x7F]+$/' , $new )!==1)&&(!is_null($new)) ) {
+		$err = "The new $type record for <$dom> contains illegals chars.";
+		syslog(LOG_ERR,"$username: Error: $type: $err");
+		return FALSE;
+	}
 	$prevRecord = readRecord($dom, $type);
 	if ( ( $prevRecord !== FALSE ) && ( $prevRecord[0] === $new ) )
         	$err = "The new $type record for <$dom> is equal to the old one.";
