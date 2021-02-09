@@ -51,7 +51,8 @@ if ( $dkim['selector']['separator'] === '_' )
 <td>Domain</td><td><input maxlength="255" value="" type="text" name="domain" placeholder="RFC5322.From domain"
                 pattern="\b((?=[a-z0-9-]{1,63}\.)(xn--)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}\b"
                 title="Look at your syntax. You must insert a FQDN domain name."
-		required>
+		required
+		disabled="disabled">
 <input type="submit" 
        style="position: absolute; left: -9999px; width: 1px; height: 1px;"
        tabindex="-1" />

@@ -7,3 +7,7 @@ ns[] = dns3.example.com
 name[internal] = dnsinternal.example.com
 name[external] = dns1.example.com
 TTL = 86400
+; absolute path of nsupdate key (-k opt)
+;key = /var/named/chroot/etc/pki/dnssec-keys/client.key
+;If you don't use auth by key, then uncomment the follow line
+;key =

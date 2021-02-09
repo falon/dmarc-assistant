@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE);
 ini_set('error_log', 'syslog');
 
 function username() {
@@ -326,8 +327,8 @@ function ldap_deleteOldRecord($ldapconf, $nsupdateconf, $createTimestamp) {
 	$ret = TRUE;
 	$retL = FALSE;
 	for ($i=0; $i<$nr; $i++) {
-		if ( $retD = updatezone($nsupdateconf['name'], 'delete',
-                array('dom' => $records['values'][$i], 'prereq' => "yxdomain {$records['values'][$i]}", 'type' => 'TXT'), '', $err) )
+		if ( $retD = updatezone($nsupdateconf['key'], $nsupdateconf['name'], 'delete',
+                array('dom' => $records['values'][$i], 'prereq' => "yxdomain {$records['values'][$i]}", 'type' => 'TXT'), '', $err ) )
 			if ( $retL = del_ldap($ds,$records['dn'][$i],$err) )
 				syslog (LOG_INFO, $username.': Info: record <'. $records['values'][$i].'> deleted at all successfully.');
 			else syslog(LOG_ERR, $username.': Error: <'. $records['values'][$i].'> deleted only from DNS and not from LDAP!');
@@ -740,7 +741,7 @@ function remove_dkim_dns($drv_del,$ds,$delay_dn,$dom,$sel,&$err) {
 }
 
 
-function nsupdate($data, &$err) {
+function nsupdate($data, &$err, $k='') {
 	// run DNS update
 	if (version_compare(PHP_VERSION, '7.0.0') < 0) 
 		$tmpfile = uniqid('nsupdate-') . '.txt';
@@ -752,6 +753,16 @@ function nsupdate($data, &$err) {
                 syslog(LOG_ALERT, $username.": Error: $err");
                 return FALSE;
 	}
+	if (!empty($k)) {
+		if (!file_exists($k)) {
+                	$err = sprintf('DNS: nsupdate key file <%s> not found.',$k);
+                	syslog(LOG_ALERT, $username.": Error: $err");
+                	return FALSE;
+        	}
+		$bin = escapeshellcmd("/usr/bin/nsupdate -k $k");
+	}
+	else
+		$bin = escapeshellcmd('/usr/bin/nsupdate');
 	if ( file_exists($tmpfile) )
 		if ( unlink ($tmpfile) )
 			syslog(LOG_INFO, $username.': Warn: DNS: nsupdate tmp file already present. I deleted it.');
@@ -760,7 +771,8 @@ function nsupdate($data, &$err) {
 		syslog(LOG_ALERT, $username.": Error: $err");
 		return FALSE;
 	}
-	exec("/usr/bin/nsupdate $tmpfile 2>&1", $ret, $status);
+
+	exec("$bin $tmpfile 2>&1", $ret, $status);
 	if ($status !== 0)  {
 		$err = "DNS: Update failed with code <$status>. File <$tmpfile> preserved for evidences.";
 		if (! empty($ret) )
@@ -789,7 +801,7 @@ function nsupdate($data, &$err) {
 
 
 
-function updatezone($servers, $action, $record, $TTL, &$errors, $zone=NULL) {
+function updatezone($key, $servers, $action, $record, $TTL, &$errors, $zone=NULL) {
 	$errors = NULL;
 	if ( !( ($action == 'add') OR ($action == 'delete') ) ) {
 		$errors = 'Update action must be "add" or "delete", not "'.$action.'".';
@@ -817,7 +829,7 @@ function updatezone($servers, $action, $record, $TTL, &$errors, $zone=NULL) {
 			send
 			quit
 EOF;
-		if ( !nsupdate($data, $err) )
+		if ( !nsupdate($data, $err, $key) )
 			$ret = FALSE;
 		$errors .= $err." Server: $server.\r\n";
 	}
@@ -964,7 +976,7 @@ function mysql_deleteOldRecord($db, $nsupdateconf, $mydate) {
 	$ret = TRUE;
 	$retM= FALSE;
         for ($i=0; $i<$nr; $i++) {
-                if ( $retD = updatezone($nsupdateconf['name'], 'delete',
+                if ( $retD = updatezone($nsupdateconf['key'], $nsupdateconf['name'], 'delete',
 		array('dom' => $records[$i], 'prereq' => "yxdomain {$records[$i]}", 'type' => 'TXT'), '', $err) )
                         if ( $retM = mysqldel($mysqli,$records[$i],$table,$err) )
                                 syslog (LOG_INFO, $user.': Info: record <'. $records[$i].'> deleted at all successfully.');
@@ -1282,7 +1294,7 @@ function renewkeys($ds,$dn,$delaydn,$dom,$sel,$selclass,$keyopt,$nsupdateconf,$d
 	$dnsR['dom'] = $sel . '._domainkey.'. $dom;
 	$dnsR['prereq'] = "nxdomain {$dnsR['dom']}";
 	$dnsR['type'] = 'TXT';	
-        if ( !updatezone($nsupdateconf['name'],'add',$dnsR,$nsupdateconf['TTL'],$err) ) {
+        if ( !updatezone($nsupdateconf['key'], $nsupdateconf['name'],'add',$dnsR,$nsupdateconf['TTL'],$err) ) {
 		$errors = $err;
 		unlink($pubfile);
                 unlink($privfile);
@@ -1774,7 +1786,7 @@ function updateRecord ( $dom, &$prev, $new, $type, $ns, &$err, $web = TRUE ) {
         	if ( $type == 'SPF' ) { /* Delete only found values */
 			foreach ( $prevRecord as $pr ) {
 				$dnsR['value'] = '"'.$pr.'"';
-		        	if ( updatezone($ns['name'],'delete',$dnsR,$ns['TTL'],$errors) ) {
+		        	if ( updatezone($ns['key'], $ns['name'],'delete',$dnsR,$ns['TTL'],$errors) ) {
 		                	if ( $web )
 						printf ( '<p><img src="checked.gif"> %s %s record with value %s deleted.</p><pre>%s</pre>',$type,
 						htmlentities("<$dom>"), htmlentities("<$pr>"), htmlentities($errors) );
@@ -1789,7 +1801,7 @@ function updateRecord ( $dom, &$prev, $new, $type, $ns, &$err, $web = TRUE ) {
 			}
 		}
 		else { /* Delete all record values, all in a row */
-			if ( updatezone($ns['name'],'delete',$dnsR,$ns['TTL'],$err) ) {
+			if ( updatezone($ns['key'], $ns['name'],'delete',$dnsR,$ns['TTL'],$err) ) {
 				if ( $web )
         				printf ( '<p><img src="checked.gif"> %s %s record deleted.</p><pre>%s</pre>',$type,
         				htmlentities("<$dom>"), htmlentities($err) );
@@ -1814,7 +1826,7 @@ function updateRecord ( $dom, &$prev, $new, $type, $ns, &$err, $web = TRUE ) {
 		$dnsR['prereq'] = "nxdomain {$dnsR['dom']}";
 	$dnsR['type'] = 'TXT';
 
-	if ( updatezone($ns['name'],'add',$dnsR,$ns['TTL'],$errors) ) {
+	if ( updatezone($ns['key'], $ns['name'],'add',$dnsR,$ns['TTL'],$errors) ) {
 	        if ( $web )
 			printf ( '<p><img src="checked.gif"> %s %s record updated with value %s.</p><pre>%s</pre>', $type,
 			htmlentities("<$dom>"), htmlentities("<$new>"), htmlentities($errors) );
