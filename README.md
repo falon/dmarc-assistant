@@ -107,9 +107,10 @@ For instance, if you have Apache HTTPD Server:
 `composer require jeremykendall/php-domain-parser`
 
    `cp -p getPublicSuffixList.sh /usr/local/bin`
+
    `chmod 700 /usr/local/bin/getPublicSuffixList.sh`
 
-   Install a systemd timer for Public Suffix List update once a day. This is needed until we provide a new Storage method.
+   Install a systemd timer for Public Suffix List update once a month. This is needed until we provide a new Storage method.
 
    _/usr/lib/systemd/system/dmarcAssistPSL.service_:
 
