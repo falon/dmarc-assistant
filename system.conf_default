@@ -1,5 +1,6 @@
 [path]
 genkey = '/usr/sbin/opendkim-genkey'
+opendkim = '/usr/sbin/opendkim'
 
 [syslog]
 tag = DMAss

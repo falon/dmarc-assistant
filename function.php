@@ -2,6 +2,9 @@
 error_reporting(E_ALL & ~E_NOTICE);
 ini_set('error_log', 'syslog');
 
+use Pdp\Rules;
+use Pdp\Domain;
+
 function username() {
         if (isset ($_SERVER['REMOTE_USER'])) $user = $_SERVER['REMOTE_USER'];
                 else if (isset ($_SERVER['USER'])) $user = $_SERVER['USER'];
@@ -1502,10 +1505,10 @@ function orgDom($dom) {
    with jeremykendall/php-domain-parser			*/
 
 	require_once 'vendor/autoload.php';
-	$pslManager = new Pdp\PublicSuffixListManager();
-	$parser = new Pdp\Parser($pslManager->getList());
-	$host = $parser->parseHost($dom);
-	return $host->registerableDomain;
+	$publicSuffixList = Rules::fromPath('/usr/local/psl/psl.dat');
+	$domain = Domain::fromIDNA2008('www.PreF.OkiNawA.jP');
+	$result = $publicSuffixList->resolve($domain);
+	return $result->registrableDomain()->toString();
 }
 
 

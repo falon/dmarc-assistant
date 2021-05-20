@@ -13,7 +13,7 @@ if ( empty( $_SERVER['HTTPS'] ) )
 	$ssl_comment = 'You have to enable SSL on your server. Otherwise the setup could work, but require authentication without SSL layer is a bad idea!';
 	else	$ssl_comment = "SSL: {$_SERVER['SSL_VERSION_INTERFACE']}\r\nProtocol: {$_SERVER['SSL_PROTOCOL']}\r\nCertificate: {$_SERVER['SSL_SERVER_I_DN_CN']}\r\nCertificate Expiration: {$_SERVER['SSL_SERVER_V_END']}" ;
 
-exec ('export COMPOSER_HOME=/root/.composer; /usr/bin/composer show jeremykendall/php-domain-parser', $domainparser, $dpstatus);
+exec ('export COMPOSER_HOME=/root/.composer; composer show jeremykendall/php-domain-parser', $domainparser, $dpstatus);
 $dpstatus = ( $dpstatus ) ? '<img src="unchecked.gif"> Domain Parser not found' : '<img src="checked.gif"> Domain Parser found';
 
 if ( isset($_SERVER['PHP_AUTH_USER']) )
@@ -25,7 +25,7 @@ $timeZone = (date_default_timezone_get()) ? '<img src="checked.gif"> Date Timezo
 $ns = (file_exists('/usr/bin/nsupdate')) ?	'<img src="checked.gif"> nsupdate is present in /usr/bin' :
 						'<img src="unchecked.gif"> nsupdate not founf in /usr/bin. Maybe is not present, or create a link to /usr/bin';
 
-exec ('opendkim -V',$od, $odstatus);
+exec (escapeshellcmd("{$sys['path']['opendkim']} -V"),$od, $odstatus);
 $odstatus = ( $odstatus ) ? '<img src="unchecked.gif"> OpenDKIM not found' : '<img src="checked.gif"> OpenDKIM found';
 $gk = (file_exists($sys['path']['genkey'])) ?	'<img src="checked.gif"> OpenDKIM-genkey found' :
 						'<img src="unchecked.gif"> OpenDKIM-genkey not found. Check the value in system.conf (genkey).';

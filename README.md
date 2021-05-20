@@ -106,6 +106,42 @@ For instance, if you have Apache HTTPD Server:
 6. Clone, then from the home directory 
 `composer require jeremykendall/php-domain-parser`
 
+   `cp -p getPublicSuffixList.sh /usr/local/bin`
+   `chmod 700 /usr/local/bin/getPublicSuffixList.sh`
+
+   Install a systemd timer for Public Suffix List update once a day. This is needed until we provide a new Storage method.
+
+   _/usr/lib/systemd/system/dmarcAssistPSL.service_:
+
+   ```
+   ### Public Suffix Domains Updates ###
+   #
+   # Get latest TLD name for php-domain-parser
+
+   [Unit]
+   Description=Public Suffix Domains Update
+
+   [Service]
+   User=root
+   ExecStart=/usr/local/bin/getPublicSuffixList.sh
+   ```
+
+   _/usr/lib/systemd/system/dmarcAssistPSL.timer_:
+   ```
+   ### Public  Suffix List update timer ###
+   #
+
+   [Unit]
+   Description=Public Suffix List Update timer
+   After=syslog.target network.target
+
+   [Timer]
+   OnCalendar=monthly
+
+   [Install]
+   WantedBy=httpd.service
+   ```
+
 7. The root folder has to be owned by the system user running the web server.
 For instance:
 ```
