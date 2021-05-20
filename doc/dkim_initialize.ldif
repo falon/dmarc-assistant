@@ -1,6 +1,4 @@
 dn: o=dkim
-aci: (targetattr = "*")(version 3.0; acl "Configuration Adminstrator"; allow (all) userdn = "ldap:///uid=admin,ou=Administrators, ou=TopologyManagement, o=NetscapeRoot";)
-aci: (targetattr ="*")(version 3.0;acl "Configuration Administrators Group";allow (all) (groupdn = "ldap:///cn=Configuration Administrators, ou=Groups, ou=TopologyManagement, o=NetscapeRoot");)
 aci: (targetattr = "*") (target = "ldap:///o=dkim") (version 3.0;acl "Grant All to DKIM Admin";allow (all)(userdn = "ldap:///uid=dkimadmin,o=dkim");)
 aci: (targetattr = "*") (target = "ldap:///o=dkim") (version 3.0;acl "Read Access for OpenDKIM";allow (read,search)(userdn = "ldap:///uid=opendkim,o=dkim");)
 objectClass: top
