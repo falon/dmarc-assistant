@@ -44,23 +44,23 @@ foreach ($dkim['selector']['class'] as $selclass) {
 				$system['path']['genkey'], $err) )
 		{
                 	case -1:
-                        	syslog(LOG_ALERT, "$username: The keys for <$dom> in <$selclass> doesn't have been renewed for error during keys generation!");
+                        	syslog(LOG_ALERT, "$username: Alert: The keys for <$dom> in <$selclass> doesn't have been renewed for error during keys generation!");
 				$return = $ret;
 				break;
                 	case -2:
-                        	syslog(LOG_ALERT, "$username: The keys for <$dom> in <$selclass> doesn't have been renewed for error during DNS MOD on pubKey!");
+                        	syslog(LOG_ALERT, "$username: Alert: The keys for <$dom> in <$selclass> doesn't have been renewed for error during DNS MOD on pubKey!");
 				$return = $ret;
 				break;
                         case -3:
-                                syslog(LOG_EMERG, "$username: The keys for <$dom> in <$selclass> doesn't have been renewed for error during LDAP MOD on privKey. To make consistent your setup manually delete the <$sel._domainkey.$dom> pubKey record added just now!");
+                                syslog(LOG_EMERG, "$username: Emerg: The keys for <$dom> in <$selclass> doesn't have been renewed for error during LDAP MOD on privKey. To make consistent your setup manually delete the <$sel._domainkey.$dom> pubKey record added just now!");
 				$return = $ret;
                                 break;
                         case -4:
-                                syslog(LOG_ALERT, "$username: The keys for <$dom> in <$selclass> have been renewed, but can't delayed delete the current DNS record!");
+                                syslog(LOG_ALERT, "$username: Alert: The keys for <$dom> in <$selclass> have been renewed, but can't delayed delete the current DNS record!");
 				$return = $ret;
                                 break;
                 	case 0:
-                        	syslog(LOG_INFO, "$username: LDAP DKIM keys for <$dom> in <$selclass> renewed successfully.");
+                        	syslog(LOG_INFO, "$username: Info: LDAP DKIM keys for <$dom> in <$selclass> renewed successfully.");
         	}
 	syslog(LOG_INFO, $username.": Info: renewal process for <$selclass> domains terminated.");
 

@@ -21,7 +21,7 @@ if ( isset($_POST['record']) ) $record = $_POST['record'];
 else $record = makeDMARCrecord($_POST, $default, $err);
 
 if ($record === FALSE) {
-	syslog(LOG_ERR, $user.": $err. Exiting.");
+	syslog(LOG_ERR, $user.": Error: $err. Exiting.");
 	exit ('<p><img src="unchecked.gif"> Error building the DMARC record:</p><pre>'.htmlentities($err).
                '</pre><p>If you are in trouble, please report this error to a sysadmin.</p>');
 }

@@ -17,7 +17,7 @@ $NOspf = TRUE;
 
 openlog($system['syslog']['tag'], LOG_PID, $system['syslog']['fac']);
 if (version_compare(PHP_VERSION, '7.0.0') < 0)
-        syslog(LOG_ALERT, "Info: Please upgrade to PHP 7.");
+        syslog(LOG_ALERT, "Alert: Please upgrade to PHP 7.");
 $ip = getenv('HTTP_CLIENT_IP')?:
 getenv('HTTP_X_FORWARDED_FOR')?:
 getenv('HTTP_X_FORWARDED')?:

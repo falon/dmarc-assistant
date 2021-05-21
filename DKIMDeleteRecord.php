@@ -19,7 +19,7 @@ if ( array_count_values($dkim['delay driver'])[TRUE] == 1 )
         $delay_drv = array_search(TRUE, $dkim['delay driver']);
 else {
 	$err = 'Error choosing delay driver. You must set one engine.';
-	syslog(LOG_ERR, username().": $err");
+	syslog(LOG_ERR, username().": Error: $err");
 	exit ( $err );
 }
 

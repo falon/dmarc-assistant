@@ -10,7 +10,7 @@ function username() {
                 else if (isset ($_SERVER['USER'])) $user = $_SERVER['USER'];
 		else if ( isset($_SERVER['PHP_AUTH_USER']) ) $user = $_SERVER['PHP_AUTH_USER'];
 		else {
-			syslog(LOG_ALERT, "No user given by connection from {$_SERVER['REMOTE_ADDR']}. Exiting");
+			syslog(LOG_ALERT, "unknown: Alert: No user given by connection from {$_SERVER['REMOTE_ADDR']}. Exiting");
     			exit(0);
 		}
         return $user;
@@ -113,7 +113,7 @@ function getPrivSel ($ds, $basedn, $dom, $selclass, $selAttr, &$err) {
 		}
 	}
 	$err = "LDAP: <$selclass> selector for <$dom> not found. Reason: ".ldap_error($ds);
-	syslog(LOG_ERR, "$username: Info: $err");
+	syslog(LOG_ERR, "$username: Error: $err");
 	return FALSE;
 }
 			
@@ -321,7 +321,7 @@ function ldap_deleteOldRecord($ldapconf, $nsupdateconf, $createTimestamp) {
         }
 	else {
         	$err = 'LDAP: Error during search! Reason: '.ldap_error($ds);
-        	syslog(LOG_ERR, $username.": Danger: $err.");
+        	syslog(LOG_ERR, $username.": Error: $err.");
 		return FALSE;
 	}
 	syslog (LOG_INFO, $username.": Info: $nr delayed deleted records found before ".$createTimestamp->format('Y-m-d H:i:s T').'.');
@@ -418,7 +418,7 @@ function mod_dkim_ldap($ds, $base, $dom, $sel, $curSel, $selclass, $key, &$err) 
         if ( !$curSel ) return FALSE;
         if ( $curSel === $sel ) {
                 $err = "LDAP: The current selector is already <$sel>. I can't change key of existing selector.";
-                syslog(LOG_ERR, $username." Info: $err");
+                syslog(LOG_ERR, $username." Error: $err");
                 return  FALSE;
         }
         $entry['DKIMSelector'][0] = $sel;
@@ -444,7 +444,7 @@ function add_dkim_subdom_ldap($ds, $base, $dom, $subdom, $sel, $selclass, &$err)
 	$username = username();
         if ( strpos($subdom,$dom) === FALSE ) {
                 $err = "LDAP: You try to add <$subdom> which is not a subdomain of <$dom>";
-                syslog(LOG_ERR, $username." Info: $err");
+                syslog(LOG_ERR, $username." Error: $err");
                 return FALSE;
         }
 
@@ -482,7 +482,7 @@ function add_dkim_email_ldap($ds, $base, $dom, $email, $alias, $gn, $sn, $sel, $
         $uid = strstr($email, '@',TRUE);
         if ( strpos($edom,$dom) === FALSE ) {
                 $err = "LDAP: You are trying to add an email with <$edom> which is not a subdomain of <$dom>.";
-                syslog(LOG_ERR, $username." Info: $err");
+                syslog(LOG_ERR, $username." Error: $err");
                 return FALSE;
         }
 
@@ -499,7 +499,7 @@ function add_dkim_email_ldap($ds, $base, $dom, $email, $alias, $gn, $sn, $sel, $
                         $dn = "uid=$uid,$dnbase";
                 else {
                         $err = "LDAP: You MUST define the default DKIM Identity of subdomain <$edom> before to add an email.";
-                        syslog(LOG_ERR, $username." Info: $err");
+                        syslog(LOG_ERR, $username." Error: $err");
                         return FALSE;
                 }
         }
@@ -525,7 +525,7 @@ function add_dkim_email_ldap($ds, $base, $dom, $email, $alias, $gn, $sn, $sel, $
 		if (! dns_getMX ($adom, $err)) return FALSE;
                 if ( strpos($adom,$edom) === FALSE ) {
                         $err = "LDAP: You try to add an email with <$adom> which is not a subdomain of <$edom>.";
-                        syslog(LOG_ERR, $username." Info: $err");
+                        syslog(LOG_ERR, $username." Error: $err");
                         return FALSE;
                 }
                 $info['mailAlternateAddress'] = $alias;
@@ -580,13 +580,13 @@ function currentLDAPSel ($ds, $dn, &$err) {
                 $info = ldap_get_entries($ds, $sr);
                 if ( $info['count'] != 1 ) {
                         $err = 'LDAP: Error in number of DKIMSelector values. Returned: '.$info['count'].'. Expected: 1';
-                        syslog(LOG_EMERG, $username.": Danger: $err.");
+                        syslog(LOG_EMERG, $username.": Emerg: $err.");
                         return FALSE;
                 }
                 return $info[0]['dkimselector'][0];
         }
         $err = 'LDAP: I can\'t find any DKIMSelector! Reason: '.ldap_error($ds);
-        syslog(LOG_EMERG, $username.": Danger: $err.");
+        syslog(LOG_EMERG, $username.": Emerg: $err.");
         return FALSE;
 }
 
@@ -602,7 +602,7 @@ function readRecord($dom, $type) {
         $value = array();
         $records = dns_get_record($dom,DNS_TXT);
         if ($records === FALSE) {
-                syslog(LOG_ERR, "$user: DNS: error in query.");
+                syslog(LOG_ERR, "$user: Error: DNS: error in query.");
                 return FALSE;
         }
         $count = 0;
@@ -624,7 +624,7 @@ function readRecord($dom, $type) {
                                                 $ok = TRUE;
                                         break;
                                 default:
-                                        syslog(LOG_ALERT, "$user: DNS: invalid record type specified.");
+                                        syslog(LOG_ALERT, "$user: Alert: DNS: invalid record type specified.");
                                         return FALSE;
                         }
                         if ( $ok ) {
@@ -753,13 +753,13 @@ function nsupdate($data, &$err, $k='') {
 	$username = username();
 	if (! file_exists('/usr/bin/nsupdate') ) {
                 $err = 'DNS: nsupdate doesn\'t exist.';
-                syslog(LOG_ALERT, $username.": Error: $err");
+                syslog(LOG_ALERT, $username.": Alert: $err");
                 return FALSE;
 	}
 	if (!empty($k)) {
 		if (!file_exists($k)) {
                 	$err = sprintf('DNS: nsupdate key file <%s> not found.',$k);
-                	syslog(LOG_ALERT, $username.": Error: $err");
+                	syslog(LOG_ALERT, $username.": Alert: $err");
                 	return FALSE;
         	}
 		$bin = escapeshellcmd("/usr/bin/nsupdate -k $k");
@@ -768,10 +768,10 @@ function nsupdate($data, &$err, $k='') {
 		$bin = escapeshellcmd('/usr/bin/nsupdate');
 	if ( file_exists($tmpfile) )
 		if ( unlink ($tmpfile) )
-			syslog(LOG_INFO, $username.': Warn: DNS: nsupdate tmp file already present. I deleted it.');
+			syslog(LOG_INFO, $username.': Info: DNS: nsupdate tmp file already present. I deleted it.');
 	if ( file_put_contents($tmpfile, $data) === FALSE ) {
 		$err = 'DNS: Can\'t write tmp file for nsupdate.';
-		syslog(LOG_ALERT, $username.": Error: $err");
+		syslog(LOG_ALERT, $username.": Alert: $err");
 		return FALSE;
 	}
 
@@ -780,7 +780,7 @@ function nsupdate($data, &$err, $k='') {
 		$err = "DNS: Update failed with code <$status>. File <$tmpfile> preserved for evidences.";
 		if (! empty($ret) )
 			$err .= ' Reason: <'.implode(' - ',$ret).'>.';
-		syslog(LOG_ALERT, "$username: Error: $err");
+		syslog(LOG_ALERT, "$username: Alert: $err");
 		return FALSE;
 	}
 	else
@@ -848,7 +848,7 @@ function mysqlconn($dbhost, $dbuser, $pwd, $db, $dbport,&$err) {
         if ($mysqli->connect_error) {
 		$err = "MySQL: Could not connect to MySQL server <$dbhost> on DB <$db> as user <$dbuser>. Reason: ".
 			$mysqli->connect_error.' (' . $mysqli->connect_errno . ')';
-		syslog (LOG_EMERG, $user.': Error: '.$err);
+		syslog (LOG_EMERG, $user.': Emerg: '.$err);
 		return FALSE;
         }
 	syslog (LOG_INFO, $user.': Info: MySQL: Successfully connected to MySQL server ' . $mysqli->host_info . " on DB <$db> as user <$dbuser>.");
@@ -1205,18 +1205,18 @@ function create_dkim_keys($domain,$selector, $pathOpenDKIM, $opt_str) {
 	$username = username();
 	if ( file_exists(__DIR__.'/'.$selector.'.private') )
 		if ( unlink (__DIR__.'/'.$selector.'.private') )
-			syslog(LOG_INFO, $username.': Warn: PrivKeyFile already present. I deleted it.');
+			syslog(LOG_INFO, $username.': Info: PrivKeyFile already present. I deleted it.');
         if ( file_exists(__DIR__.'/'.$selector.'.txt') )
                 if ( unlink (__DIR__.'/'.$selector.'.txt') )
-                        syslog(LOG_INFO, $username.': Warn: PubKeyFile already present. I deleted it.');
+                        syslog(LOG_INFO, $username.': Info: PubKeyFile already present. I deleted it.');
 
 	if (! file_exists($pathOpenDKIM) )
-		syslog(LOG_ALERT, $username.": Error: opendkim-genkey doesn't exist.");
+		syslog(LOG_ALERT, $username.": Alert: opendkim-genkey doesn't exist.");
 	$gencommand = $pathOpenDKIM.' --directory='.__DIR__." $opt_str --append-domain --domain=$domain --selector=$selector";
 	if (system($gencommand,$status) !== FALSE) syslog(LOG_INFO, $username.": Info: system call for $pathOpenDKIM succeeds");
 	else syslog(LOG_ERR, $username.": Error: unable to execute system call for opendkim-genkey");
 	if ( $status === 0 ) syslog(LOG_INFO, $username.": Info: opendkim-genkey terminated with success state for <$domain> and selector <$selector>.");
-	else syslog(LOG_ALERT, $username.": Error: opendkim-genkey can't generate the keys for <$domain> and selector <$selector>. Check options and syntax in [genkey] section of file dkim.conf.");
+	else syslog(LOG_ALERT, $username.": Alert: opendkim-genkey can't generate the keys for <$domain> and selector <$selector>. Check options and syntax in [genkey] section of file dkim.conf.");
 	
 	if ( file_exists(__DIR__.'/'.$selector.'.private') AND file_exists(__DIR__.'/'.$selector.'.txt') )
 		return array(__DIR__.'/'.$selector.'.private', __DIR__.'/'.$selector.'.txt');
@@ -1264,14 +1264,14 @@ function renewkeys($ds,$dn,$delaydn,$dom,$sel,$selclass,$keyopt,$nsupdateconf,$d
 	        if ( !$curSel ) {
 			$err = 'LDAP: I have to modify the existing selector, but I can\'t find it!';
 			$errors .= $err;
-                        syslog(LOG_ERR, $username." Info: $err");
+                        syslog(LOG_ERR, $username." Error: $err");
                         return  -1;
 		}
 	        if ( $curSel === $sel ) {
 	                $err = "LDAP: The current selector is already <$sel>. I can't change key of existing selector.";
 			$err .= ' Maybe you are trying to renew a key in current time slot. Please, be patient and wait the end of current time slot.';
 			$errors .= $err;
-	                syslog(LOG_ERR, $username." Info: $err");
+	                syslog(LOG_ERR, $username." Error: $err");
 	                return  -1;
         	}
 	}
@@ -1596,7 +1596,7 @@ function setURIzone($ns,$dom,$tag,$uri,&$warning,&$error) {
 		default:
 			$err = "Invalid URI tag: <$tag>";
 			$error[] = $err;
-			syslog(LOG_ERR,$username.": $err");
+			syslog(LOG_ERR,$username.": Error: $err");
 	}
 
 	$email = 'postmaster@invalid';
@@ -1610,7 +1610,7 @@ function setURIzone($ns,$dom,$tag,$uri,&$warning,&$error) {
 	else {
 		$err = "Invalid <$tag> mail sintax.";
 		$error[] = $err;
-		syslog(LOG_ERR,$username.": $err");
+		syslog(LOG_ERR,$username.": Error: $err");
 	}
 
 	list(,$edom) = explode('@',$email);
@@ -1779,7 +1779,7 @@ function updateRecord ( $dom, &$prev, $new, $type, $ns, &$err, $web = TRUE ) {
 	$prev = $prevRecord[0];
 	if  ( $prevRecord === FALSE ) {
         	if ( $web ) printf ( '<p><img src="checked.gif"> There was no %s records for %s</p>', $type, htmlentities("<$dom>") );
-		syslog ( LOG_INFO, "There was no $type record for <$dom>" );
+		syslog ( LOG_INFO, "Info: There was no $type record for <$dom>" );
 	}
 	else {
 		/* Del old value */
