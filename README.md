@@ -103,6 +103,7 @@ For instance, if you have Apache HTTPD Server:
 			</RequireAny>
 		</Directory>
 	```	
+
 6. Clone, then from the home directory 
 `composer require jeremykendall/php-domain-parser`
 
