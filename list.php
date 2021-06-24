@@ -32,7 +32,7 @@ if ( is_null($dom) ) exit ('<p><img src="unchecked.gif">Please, insert a valid d
 /* DKIM */
 $class = NULL;
 if ($str_mode)
-	print '<p><img src="warning.gif">You choose a strict operation mode. You are allowed to configure DKIM and DMARC for each subdomain and not only for Organizational domain. Please, take care about your setup.</p>';
+	print '<p><img src="warning.gif">You choose a strict operation mode. Now you are allowed to configure DKIM and DMARC for each subdomain and not only for Organizational domain. Please, take care about your setup. This has nothing to do with DMARC or DKIM <i>strict</i> configuration.</p>';
 	
 print '<h2>DKIM</h2><div id="content">';
 $own = is_own($dom, $conf['ns']);
@@ -77,6 +77,7 @@ if ( $own ) {
 					exit ('<p><img src="unchecked.gif">'.
 					htmlentities("Panic: the pubkey of <$domfound> is delayed deleted, but it seems associated to a valid privKey! Check at your setup and... good luck because you are in trouble!").'</p>');
 				print '<p><img src="warning.gif"> Your setup is working, but the keys are quite old and should be renewed. You have to wait for the authomated renewal process to finish, or if you are in trouble proceed with manual renew.</p>';
+				syslog(LOG_WARNING, "$username: Warn: Selector \"$sel\" is old and it should be renewed.");
 				$setup_opt = 'renew';
 				$sel = buildSel ($dkim, $selclass, $domfound);
 			}
@@ -115,10 +116,13 @@ if ( $own ) {
 		dkim_setup($ldapconn, $ldap,$dkim,$domfound,$selclass,$sel,$setup_opt);
         	print '<div id="DKIMResult"></div></div>';
 	}
-	else print '<p><img src="unchecked.gif">You are not a maintainer for the domain <'.$domfound.'. DKIM ignored.</p>';
+	else print '<p><img src="unchecked.gif">You are not a maintainer for the domain '.$domfound.'. DKIM ignored.</p>';
 }
 
-else print '<p><img src="unchecked.gif">You are not a maintainer for this domain. DKIM ignored.</p>';
+else {
+	print '<p><img src="unchecked.gif">You are not a maintainer for this domain.</p>';
+	syslog(LOG_WARNING, "$username: Warn: You are not a maintainer for this domain.");
+}
 
 
 

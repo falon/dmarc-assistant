@@ -113,7 +113,7 @@ function getPrivSel ($ds, $basedn, $dom, $selclass, $selAttr, &$err) {
 		}
 	}
 	$err = "LDAP: <$selclass> selector for <$dom> not found. Reason: ".ldap_error($ds);
-	syslog(LOG_ERR, "$username: Error: $err");
+	syslog(LOG_WARNING, "$username: Warn: $err");
 	return FALSE;
 }
 			
@@ -1506,7 +1506,7 @@ function orgDom($dom) {
 
 	require_once 'vendor/autoload.php';
 	$publicSuffixList = Rules::fromPath('/usr/local/psl/psl.dat');
-	$domain = Domain::fromIDNA2008('www.PreF.OkiNawA.jP');
+	$domain = Domain::fromIDNA2008($dom);
 	$result = $publicSuffixList->resolve($domain);
 	return $result->registrableDomain()->toString();
 }
@@ -1779,7 +1779,7 @@ function updateRecord ( $dom, &$prev, $new, $type, $ns, &$err, $web = TRUE ) {
 	$prev = $prevRecord[0];
 	if  ( $prevRecord === FALSE ) {
         	if ( $web ) printf ( '<p><img src="checked.gif"> There was no %s records for %s</p>', $type, htmlentities("<$dom>") );
-		syslog ( LOG_INFO, "Info: There was no $type record for <$dom>" );
+		syslog ( LOG_INFO, "$username: Info: There was no $type record for <$dom>" );
 	}
 	else {
 		/* Del old value */
