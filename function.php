@@ -403,7 +403,7 @@ function add_dkim_ldap($ds, $base, $dom, $sel, $selclass, $key, &$err) {
         $info['ou'] = 'SigningTable';
         if (! add_ldap ($ds, $dn, $info, $err) ) return FALSE;
 
-        syslog(LOG_INFO, username()." Info: LDAP: The new domain <$dom> has added to DKIM for <$sel>.");
+        syslog(LOG_INFO, username().": Info: LDAP: The new domain <$dom> has added to DKIM for <$sel>.");
         return TRUE;
 }
 
@@ -418,7 +418,7 @@ function mod_dkim_ldap($ds, $base, $dom, $sel, $curSel, $selclass, $key, &$err) 
         if ( !$curSel ) return FALSE;
         if ( $curSel === $sel ) {
                 $err = "LDAP: The current selector is already <$sel>. I can't change key of existing selector.";
-                syslog(LOG_ERR, $username." Error: $err");
+                syslog(LOG_ERR, $username.": Error: $err");
                 return  FALSE;
         }
         $entry['DKIMSelector'][0] = $sel;
@@ -430,7 +430,7 @@ function mod_dkim_ldap($ds, $base, $dom, $sel, $curSel, $selclass, $key, &$err) 
         $entry['DKIMKey'] = $key;
         if ( replace_ldap ($ds, $dn, $entry, $err) ) {
                 $err = "LDAP: The current DKIMSelector of value <$curSel> has been replaced with the value <$sel>.";
-                syslog(LOG_INFO, $username." Info: $err");
+                syslog(LOG_INFO, $username.": Info: $err");
                 	return TRUE;
         }
         return FALSE;
@@ -444,7 +444,7 @@ function add_dkim_subdom_ldap($ds, $base, $dom, $subdom, $sel, $selclass, &$err)
 	$username = username();
         if ( strpos($subdom,$dom) === FALSE ) {
                 $err = "LDAP: You try to add <$subdom> which is not a subdomain of <$dom>";
-                syslog(LOG_ERR, $username." Error: $err");
+                syslog(LOG_ERR, $username.": Error: $err");
                 return FALSE;
         }
 
@@ -467,7 +467,7 @@ function add_dkim_subdom_ldap($ds, $base, $dom, $subdom, $sel, $selclass, &$err)
         $info['objectClass'][3] = 'dkimmailrecipient';
         $info['DKIMSelector'] = $sel;
 
-        syslog (LOG_INFO,  $username.' Info: LDAP: adding DKIM Identity for '.$subdom);
+        syslog (LOG_INFO,  $username.': Info: LDAP: adding DKIM Identity for '.$subdom);
         return add_ldap ($ds, $dn, $info, $err);
 }
 
@@ -482,7 +482,7 @@ function add_dkim_email_ldap($ds, $base, $dom, $email, $alias, $gn, $sn, $sel, $
         $uid = strstr($email, '@',TRUE);
         if ( strpos($edom,$dom) === FALSE ) {
                 $err = "LDAP: You are trying to add an email with <$edom> which is not a subdomain of <$dom>.";
-                syslog(LOG_ERR, $username." Error: $err");
+                syslog(LOG_ERR, $username.": Error: $err");
                 return FALSE;
         }
 
@@ -499,7 +499,7 @@ function add_dkim_email_ldap($ds, $base, $dom, $email, $alias, $gn, $sn, $sel, $
                         $dn = "uid=$uid,$dnbase";
                 else {
                         $err = "LDAP: You MUST define the default DKIM Identity of subdomain <$edom> before to add an email.";
-                        syslog(LOG_ERR, $username." Error: $err");
+                        syslog(LOG_ERR, $username.": Error: $err");
                         return FALSE;
                 }
         }
@@ -519,17 +519,17 @@ function add_dkim_email_ldap($ds, $base, $dom, $email, $alias, $gn, $sn, $sel, $
         $info['sn'] = $sn;
         $info['cn'] = $gn.' '.$sn;
 
-        syslog(LOG_INFO, $username." Info: LDAP: adding DKIM email identity <$email> to <$dom> key.");
+        syslog(LOG_INFO, $username.": Info: LDAP: adding DKIM email identity <$email> to <$dom> key.");
         if (!is_null($alias)) {
                 $adom = substr(strstr($alias, '@'),1);
 		if (! dns_getMX ($adom, $err)) return FALSE;
                 if ( strpos($adom,$edom) === FALSE ) {
                         $err = "LDAP: You try to add an email with <$adom> which is not a subdomain of <$edom>.";
-                        syslog(LOG_ERR, $username." Error: $err");
+                        syslog(LOG_ERR, $username.": Error: $err");
                         return FALSE;
                 }
                 $info['mailAlternateAddress'] = $alias;
-                syslog(LOG_WARNING, $username." Warn: LDAP: adding DKIM alias email identity <$alias> for <$email> to <$dom> key.".
+                syslog(LOG_WARNING, $username.": Warn: LDAP: adding DKIM alias email identity <$alias> for <$email> to <$dom> key.".
                         ' This could cause warning at higher reputation level.');
         }
 
@@ -1264,14 +1264,14 @@ function renewkeys($ds,$dn,$delaydn,$dom,$sel,$selclass,$keyopt,$nsupdateconf,$d
 	        if ( !$curSel ) {
 			$err = 'LDAP: I have to modify the existing selector, but I can\'t find it!';
 			$errors .= $err;
-                        syslog(LOG_ERR, $username." Error: $err");
+                        syslog(LOG_ERR, $username.": Error: $err");
                         return  -1;
 		}
 	        if ( $curSel === $sel ) {
 	                $err = "LDAP: The current selector is already <$sel>. I can't change key of existing selector.";
 			$err .= ' Maybe you are trying to renew a key in current time slot. Please, be patient and wait the end of current time slot.';
 			$errors .= $err;
-	                syslog(LOG_ERR, $username." Error: $err");
+	                syslog(LOG_ERR, $username.": Error: $err");
 	                return  -1;
         	}
 	}
